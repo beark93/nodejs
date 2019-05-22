@@ -5,7 +5,7 @@ const {User} = require('../models');
 
 const router = express.Router();
 
-router.post('/:id/follow', isLoggedIn, async (req, res, mext) => {
+router.post('/:id/follow', isLoggedIn, async (req, res, next) => {
     try {
         const user = await User.findOne({where: {id: req.user.id}});
         await user.addFollowing(parseInt(req.params.id, 10));
@@ -16,7 +16,7 @@ router.post('/:id/follow', isLoggedIn, async (req, res, mext) => {
     }
 });
 
-router.post('/:id/unfollow', isLoggedIn, async (req, res, mext) => {
+router.post('/:id/unfollow', isLoggedIn, async (req, res, next) => {
     try {
         const user = await User.findOne({where: {id: req.user.id}});
         await user.removeFollowing(parseInt(req.params.id, 10));
@@ -27,7 +27,7 @@ router.post('/:id/unfollow', isLoggedIn, async (req, res, mext) => {
     }
 });
 
-router.get('/modnick', isLoggedIn, async (req, res, mext) => {
+router.get('/modnick', isLoggedIn, async (req, res, next) => {
     try {
         await User.update({
             nick: req.query.modnick,
