@@ -6,9 +6,38 @@ block content
       h2 팔로잉 목록
       if user.Followings
         for following in user.Followings
-          div= following.nick
+          div(value=following.id)= following.nick
+            button.unfollow 삭제
     .followers.half
       h2 팔로워 목록
       if user.Followers
         for follower in user.Followers
           div= follower.nick
+  .modify-nick(style='width:100%;')
+    form#modnick-form(action='/user/modnick')
+      input(type='text' name='modnick' placeholder='변경할 닉네임')
+      button(onclick='return confirm("닉네임을 수정하시겠습니까?")').nick-btn 수정
+  script.
+    document.querySelectorAll('.unfollow').forEach(function (del) {
+      del.addEventListener('click', function () {
+        var isLoggedIn = document.querySelector('#my-id');
+        if (isLoggedIn) {
+          var userId = del.parentNode.getAttribute('value');
+          var myId = isLoggedIn.value;
+          if (userId !== myId) {
+            if (confirm('팔로잉을 끊으시겠습니까?')) {
+              var xhr = new XMLHttpRequest();
+              xhr.onload = function () {
+                if (xhr.status === 200) {
+                  location.reload();
+                } else {
+                  console.error(xhr.responseText);
+                }
+              };
+              xhr.open('POST', '/user/' + userId + '/unfollow');
+              xhr.send();
+            }
+          }
+        }
+      });
+    });
